@@ -23,7 +23,7 @@ const App = () => {
       console.log('Fetching artists for country:', selectedCountry);
       if (selectedCountry) {
         try {
-          const response = await axios.get(`http://localhost:5000/api/artists/country/${selectedCountry}`);
+          const response = await axios.get(`https://worldtunes.onrender.com/api/artists/country/${selectedCountry}`);
           setArtists(response.data);
         } catch (error) {
           console.error('Error fetching artists:', error);
