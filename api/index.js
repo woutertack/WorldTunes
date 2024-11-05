@@ -14,12 +14,11 @@ const artistRoutes = require('./routes/artists');
 app.use('/api/artists', artistRoutes);
 
 // MongoDB connection
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.error(err));
+// MongoDB connection
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error('MongoDB connection error:', err));
+
 
 // Spotify Token Route
 app.get('/api/spotify-token', async (req, res) => {
