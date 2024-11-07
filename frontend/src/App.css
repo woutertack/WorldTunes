@@ -25,8 +25,8 @@ li {
 
 .logo {
   position: fixed;
-  width: 180px;
-  bottom: 40px;  /* Adjust to desired spacing from the bottom */
-  left: 50px;    /* Adjust to desired spacing from the left */
+  width: 7.5%;
+  bottom: 3%;  /* Adjust to desired spacing from the bottom */
+  left: 2%;    /* Adjust to desired spacing from the left */
   z-index: 10; 
 }

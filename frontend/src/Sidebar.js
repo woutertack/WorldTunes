@@ -1,4 +1,3 @@
-// Sidebar.js
 import React, { useState, useEffect } from 'react';
 import './Sidebar.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -6,7 +5,7 @@ import { faXmark, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import TopTracksView from './TopTracksView';
 import { getSpotifyAccessToken } from './utils/spotify';
 
-const Sidebar = ({ country, artists, onClose }) => {
+const Sidebar = ({ country, artists, isLoading, onClose }) => {
   const [category, setCategory] = useState('popular');
   const [currentPage, setCurrentPage] = useState(1);
   const [artistData, setArtistData] = useState([]);
@@ -28,7 +27,7 @@ const Sidebar = ({ country, artists, onClose }) => {
           return { ...artist, popularity: data.popularity };
         } catch (error) {
           console.error(`Error fetching data for ${artist.name}`, error);
-          return artist; // Return artist without popularity if there's an error
+          return artist;
         }
       });
 
@@ -36,7 +35,7 @@ const Sidebar = ({ country, artists, onClose }) => {
       setArtistData(artistData);
     }
 
-    fetchArtistPopularity();
+    if (artists.length > 0) fetchArtistPopularity();
   }, [artists]);
 
   // Reset selected artist whenever the country changes
@@ -65,26 +64,6 @@ const Sidebar = ({ country, artists, onClose }) => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  const getPaginationGroup = () => {
-    const pagination = [];
-    if (totalPages <= maxPageButtons + 2) {
-      for (let i = 1; i <= totalPages; i++) {
-        pagination.push(i);
-      }
-    } else {
-      pagination.push(1);
-      if (currentPage > 3) pagination.push("...");
-      const start = Math.max(2, currentPage - 1);
-      const end = Math.min(totalPages - 1, currentPage + 1);
-      for (let i = start; i <= end; i++) {
-        pagination.push(i);
-      }
-      if (currentPage < totalPages - 2) pagination.push("...");
-      pagination.push(totalPages);
-    }
-    return pagination;
-  };
-
   const handleArtistClick = (artist) => {
     setSelectedArtist(artist);
   };
@@ -101,26 +80,30 @@ const Sidebar = ({ country, artists, onClose }) => {
 
       <h2 className="country-title">{country}</h2>
 
-      {selectedArtist ? (
-        <TopTracksView artist={selectedArtist} onBack={handleBack} />
+      {isLoading ? (
+        // Display loading indicator while fetching data
+        <div className="loading-indicator">Loading artists...</div>
       ) : (
-        <>
-          <div className="category-selector">
-            <button
-              className={category === 'popular' ? 'active' : ''}
-              onClick={() => handleCategoryChange('popular')}
-            >
-              Popular
-            </button>
-            <button
-              className={category === 'random' ? 'active' : ''}
-              onClick={() => handleCategoryChange('random')}
-            >
-              Random
-            </button>
-          </div>
+        selectedArtist ? (
+          <TopTracksView artist={selectedArtist} onBack={handleBack} />
+        ) : (
+          <>
+            <div className="category-selector">
+              <button
+                className={category === 'popular' ? 'active' : ''}
+                onClick={() => handleCategoryChange('popular')}
+              >
+                Popular
+              </button>
+              <button
+                className={category === 'random' ? 'active' : ''}
+                onClick={() => handleCategoryChange('random')}
+              >
+                Random
+              </button>
+            </div>
 
-          <div className="artist-container">
+            <div className="artist-container">
               {currentArtists.length > 0 ? (
                 currentArtists.map((artist) => (
                   <div
@@ -134,17 +117,9 @@ const Sidebar = ({ country, artists, onClose }) => {
                       className="artist-img"
                     />
                     <p className="artist-name">{artist.name}</p>
-
-                    
-                    
-                    {/* Render each genre as a button-like element */}
                     <div className="artist-genres">
                       {artist.genres.map((genre, index) => (
-                        <span
-                          key={index}
-                          className="genre-button"
-                          onClick={(e) => e.stopPropagation()} // Prevent click event from bubbling up
-                        >
+                        <span key={index} className="genre-button">
                           {genre}
                         </span>
                       ))}
@@ -156,32 +131,11 @@ const Sidebar = ({ country, artists, onClose }) => {
               )}
             </div>
 
-
-          <div className="pagination">
-            {currentPage > 1 && (
-              <button className="pagination-btn" onClick={() => paginate(currentPage - 1)}>
-                Previous
-              </button>
-            )}
-
-            {getPaginationGroup().map((item, index) => (
-              <button
-                key={index}
-                onClick={() => item !== "..." && paginate(item)}
-                className={`pagination-btn ${currentPage === item ? 'active' : ''}`}
-                disabled={item === "..."}
-              >
-                {item}
-              </button>
-            ))}
-
-            {currentPage < totalPages && (
-              <button className="pagination-btn" onClick={() => paginate(currentPage + 1)}>
-                Next
-              </button>
-            )}
-          </div>
-        </>
+            <div className="pagination">
+              {/* Pagination controls */}
+            </div>
+          </>
+        )
       )}
     </div>
   );

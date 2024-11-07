@@ -9,40 +9,41 @@ import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 const App = () => {
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [artists, setArtists] = useState([]);
-  const [isSidebarOpen, setSidebarOpen] = useState(true); // Start with sidebar open
+  const [isSidebarOpen, setSidebarOpen] = useState(true);
+  const [isLoading, setIsLoading] = useState(false); // Loading state for artists fetch
 
   const handleCountrySelect = (country) => {
-    console.log('Selected country:', country); 
     setSelectedCountry(country);
-    setSidebarOpen(true); // Open the sidebar when a country is selected
+    setSidebarOpen(true);
   };
 
   // Fetch artists when the selectedCountry changes
   useEffect(() => {
     const fetchArtistsByCountry = async () => {
-      console.log('Fetching artists for country:', selectedCountry);
       if (selectedCountry) {
+        setIsLoading(true); // Start loading
         try {
           const response = await axios.get(`https://worldtunes.onrender.com/api/artists/country/${selectedCountry}`);
           setArtists(response.data);
         } catch (error) {
           console.error('Error fetching artists:', error);
         }
+        setIsLoading(false); // Stop loading
       }
     };
-    
+
     fetchArtistsByCountry();
   }, [selectedCountry]);
 
   const toggleSidebar = () => {
-    setSidebarOpen(!isSidebarOpen); // Toggle sidebar open/closed state
+    setSidebarOpen(!isSidebarOpen);
   };
 
   return (
     <div className="app">
       <div className="content">
         <MapComponent onSelectCountry={handleCountrySelect} />
-        
+
         {/* Sidebar or arrow to open it */}
         {selectedCountry && (
           <>
@@ -50,6 +51,7 @@ const App = () => {
               <Sidebar
                 country={selectedCountry}
                 artists={artists}
+                isLoading={isLoading} // Pass loading state to Sidebar
                 onClose={toggleSidebar}
               />
             ) : (

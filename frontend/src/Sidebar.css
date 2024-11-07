@@ -12,7 +12,7 @@
   transition: transform 0.3s ease-in-out;
   overflow-y: auto;
 
-  width: 800px;
+  width: 35%;
   padding-left: 1.5%;
  
   
@@ -240,3 +240,9 @@ h2 {
 
 
 
+.loading-indicator {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #555;
+  padding: 20px;
+}
